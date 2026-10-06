@@ -6,7 +6,7 @@ Agents get stuck for boring reasons: a card was answered but nobody woke the age
 
 `paperclip-watchdog` checks your Paperclip server every minute, finds tasks stuck for a **mechanical** reason and unsticks them. When something needs a human, it tells you.
 
-<p align="center"><img src="docs/screenshot.png" width="720" alt="paperclip-watchdog log: reopening and waking stuck tasks"></p>
+<p align="center"><img src="docs/demo.gif" width="720" alt="paperclip-watchdog log: reopening and waking stuck tasks"></p>
 
 - 🧠 **No model tokens.** It only calls the Paperclip REST API (and GitHub for CI). Waiting costs nothing.
 - 🔁 **Safe by design.** Every action is capped per task, signed in a comment (`🛡 watchdog:`), and `--dry-run` shows what it would do.

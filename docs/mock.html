@@ -9,13 +9,14 @@ pre{margin:0;padding:12px 16px;white-space:pre-wrap}
 .g{color:#7ee787}.y{color:#e3b341}.b{color:#79c0ff}.m{color:#8b949e}.r{color:#ff7b72}
 </style></head><body><div class="w">
 <div class="bar"><span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span><span class="t">paperclip-watchdog</span></div>
-<pre><span class="m">03:12:01</span> started; Paperclip http://localhost:3100; every 60s
-<span class="m">03:14:02</span> <span class="b">answered-card</span>: reopen <b>ACM-42</b>  <span class="m">(card accepted 41 min ago, nobody woke the agent)</span>
-<span class="m">03:21:03</span> <span class="b">dependency-done</span>: reopen <b>ACM-51</b> ← ACM-48 (done)
-<span class="m">03:47:05</span> <span class="b">ci-wait</span>: <b>NWD-12</b> CI finished  <span class="g">✔ lint</span> · <span class="g">✔ test</span> · <span class="r">✘ e2e</span>
-<span class="m">04:02:06</span> <span class="b">ci-wait</span>: <b>NWD-15</b> PR conflicts <span class="m">— CI will never start, told the agent to merge base</span>
-<span class="m">04:30:08</span> <span class="b">broken-session</span>: reset <b>ACM-57</b>  <span class="m">(2 empty runs in a row)</span>
-<span class="m">05:11:09</span> <span class="b">idle-assigned</span>: wake <b>NWD-9</b> (1/2)
-<span class="m">06:40:12</span> <span class="y">ALERT</span> Northwind NWD-20 has not moved for 2 h (blocked, waiting for: legal sign-off)
-<span class="m">07:58:14</span> <span class="b">benign-agent-error</span>: clear reviewer-2
-</pre></div></body></html>
+<pre><span data-s="1"><span class="m">03:12:01</span> started; Paperclip http://localhost:3100; every 60s
+</span><span data-s="2"><span class="m">03:14:02</span> <span class="b">answered-card</span>: reopen <b>ACM-42</b>  <span class="m">(card accepted 41 min ago, nobody woke the agent)</span>
+</span><span data-s="3"><span class="m">03:21:03</span> <span class="b">dependency-done</span>: reopen <b>ACM-51</b> ← ACM-48 (done)
+</span><span data-s="4"><span class="m">03:47:05</span> <span class="b">ci-wait</span>: <b>NWD-12</b> CI finished  <span class="g">✔ lint</span> · <span class="g">✔ test</span> · <span class="r">✘ e2e</span>
+</span><span data-s="5"><span class="m">04:02:06</span> <span class="b">ci-wait</span>: <b>NWD-15</b> PR conflicts <span class="m">— CI will never start, told the agent to merge base</span>
+</span><span data-s="6"><span class="m">04:30:08</span> <span class="b">broken-session</span>: reset <b>ACM-57</b>  <span class="m">(2 empty runs in a row)</span>
+</span><span data-s="7"><span class="m">05:11:09</span> <span class="b">idle-assigned</span>: wake <b>NWD-9</b> (1/2)
+</span><span data-s="8"><span class="m">06:40:12</span> <span class="y">ALERT</span> Northwind NWD-20 has not moved for 2 h (blocked, waiting for: legal sign-off)
+</span><span data-s="9"><span class="m">07:58:14</span> <span class="b">benign-agent-error</span>: clear reviewer-2
+</span></pre></div>
+<script>const st=+(new URLSearchParams(location.search).get("step")||99);document.querySelectorAll("[data-s]").forEach(e=>{if(+e.dataset.s>st)e.style.visibility="hidden"});</script></body></html>
