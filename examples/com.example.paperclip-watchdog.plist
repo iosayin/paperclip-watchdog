@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- launchd agent (macOS): one pass every 60 s. Adjust paths, copy to ~/Library/LaunchAgents/, then:
+     launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.paperclip-watchdog.plist -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.example.paperclip-watchdog</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/local/bin/node</string>
+    <string>/path/to/paperclip-watchdog/src/watchdog.mjs</string>
+    <string>--once</string>
+  </array>
+  <key>EnvironmentVariables</key><dict>
+    <key>PW_ENV_FILE</key><string>/path/to/paperclip-watchdog/.env</string>
+  </dict>
+  <key>StartInterval</key><integer>60</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/tmp/paperclip-watchdog.log</string>
+  <key>StandardErrorPath</key><string>/tmp/paperclip-watchdog.log</string>
+</dict></plist>

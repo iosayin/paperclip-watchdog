@@ -1,0 +1,20 @@
+# systemd unit (Linux). Copy to /etc/systemd/system/, adjust paths and user, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now paperclip-watchdog
+[Unit]
+Description=Paperclip watchdog
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=paperclip
+WorkingDirectory=/opt/paperclip-watchdog
+EnvironmentFile=/opt/paperclip-watchdog/.env
+ExecStart=/usr/bin/node /opt/paperclip-watchdog/src/watchdog.mjs
+Restart=always
+RestartSec=30
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/paperclip/.paperclip-watchdog
+
+[Install]
+WantedBy=multi-user.target

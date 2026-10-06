@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>paperclip-watchdog mock</title>
+<!-- Mock log for the README. All names and content are fictional. -->
+<style>
+body{margin:0;background:#0d1117;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#c9d1d9}
+.w{width:720px;box-sizing:border-box;padding:0 0 14px}
+.bar{background:#161b22;padding:9px 12px;display:flex;gap:7px;align-items:center;border-bottom:1px solid #21262d}
+.d{width:11px;height:11px;border-radius:50%}.t{color:#8b949e;margin-left:8px;font-size:12px}
+pre{margin:0;padding:12px 16px;white-space:pre-wrap}
+.g{color:#7ee787}.y{color:#e3b341}.b{color:#79c0ff}.m{color:#8b949e}.r{color:#ff7b72}
+</style></head><body><div class="w">
+<div class="bar"><span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span><span class="t">paperclip-watchdog</span></div>
+<pre><span class="m">03:12:01</span> started; Paperclip http://localhost:3100; every 60s
+<span class="m">03:14:02</span> <span class="b">answered-card</span>: reopen <b>ACM-42</b>  <span class="m">(card accepted 41 min ago, nobody woke the agent)</span>
+<span class="m">03:21:03</span> <span class="b">dependency-done</span>: reopen <b>ACM-51</b> ← ACM-48 (done)
+<span class="m">03:47:05</span> <span class="b">ci-wait</span>: <b>NWD-12</b> CI finished  <span class="g">✔ lint</span> · <span class="g">✔ test</span> · <span class="r">✘ e2e</span>
+<span class="m">04:02:06</span> <span class="b">ci-wait</span>: <b>NWD-15</b> PR conflicts <span class="m">— CI will never start, told the agent to merge base</span>
+<span class="m">04:30:08</span> <span class="b">broken-session</span>: reset <b>ACM-57</b>  <span class="m">(2 empty runs in a row)</span>
+<span class="m">05:11:09</span> <span class="b">idle-assigned</span>: wake <b>NWD-9</b> (1/2)
+<span class="m">06:40:12</span> <span class="y">ALERT</span> Northwind NWD-20 has not moved for 2 h (blocked, waiting for: legal sign-off)
+<span class="m">07:58:14</span> <span class="b">benign-agent-error</span>: clear reviewer-2
+</pre></div></body></html>
