@@ -71,6 +71,8 @@ Every watcher can be turned off (`PW_ANSWERED_CARD=false`, …). Thresholds: `PW
 - The board token can change task status and wake agents. Keep it like a password (`PAPERCLIP_TOKEN_FILE` + `chmod 600`).
 - Tested with Paperclip `2026.1001`. Paperclip moves fast; if a field changes, please open an issue.
 
+Using Claude Code for long tasks? [claude-code-notebook](https://github.com/iosayin/claude-code-notebook) keeps the working state across context compaction.
+
 ## License
 
 MIT
