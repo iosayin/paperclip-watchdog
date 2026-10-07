@@ -3,14 +3,43 @@
   "version": "0.1.0",
   "description": "Keeps your Paperclip AI company moving while you're away: finds stuck agent tasks and unsticks them. No model tokens.",
   "type": "module",
-  "bin": { "paperclip-watchdog": "src/watchdog.mjs" },
+  "bin": {
+    "paperclip-watchdog": "src/watchdog.mjs"
+  },
   "main": "src/watchdog.mjs",
   "scripts": {
     "start": "node src/watchdog.mjs",
     "dry-run": "node src/watchdog.mjs --dry-run",
     "check": "node --check src/watchdog.mjs && node --check src/config.mjs"
   },
-  "engines": { "node": ">=20" },
-  "keywords": ["paperclip", "ai-agents", "watchdog", "agent-orchestration", "self-healing", "claude-code", "devops"],
-  "license": "MIT"
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "paperclip",
+    "ai-agents",
+    "watchdog",
+    "agent-orchestration",
+    "self-healing",
+    "claude-code",
+    "devops"
+  ],
+  "license": "MIT",
+  "author": "iosayin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iosayin/paperclip-watchdog.git"
+  },
+  "homepage": "https://github.com/iosayin/paperclip-watchdog#readme",
+  "bugs": {
+    "url": "https://github.com/iosayin/paperclip-watchdog/issues"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "README.tr.md",
+    "LICENSE",
+    ".env.example",
+    "examples/"
+  ]
 }
