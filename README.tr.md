@@ -6,6 +6,10 @@ Ajanlar sıkıcı sebeplerle takılır: kartı cevapladınız ama ajanı uyandı
 
 `paperclip-watchdog` her dakika Paperclip'e bakar, **mekanik** bir sebeple takılan işleri bulup yürütür; insan gerektiren bir durum varsa size haber verir. Model token'ı harcamaz, bağımlılığı yoktur, her işlemi görev başına sınırlıdır ve yorumla imzalar. `--dry-run` hiçbir şey değiştirmeden ne yapacağını gösterir.
 
+**0.2 ile gelenler:**
+- **Token geçişi:** Ajanların kullandığı token devre dışı kalınca (ör. başka Claude hesabına geçtiniz) çalışmalar "Secret is not active" ile sessizce düşer. Watchdog ajanları aynı ailedeki etkin token'a (`CLAUDE_CODE_OAUTH_TOKEN-1` gibi) taşır, bu sebeple düşen görevleri yeniden açar ve haber verir. Hesap değiştirmek için eskisini devre dışı bırakmanız yeter; geri dönmek de aynı tık.
+- **Sahipsiz tarayıcılar:** Kesilen çalışmaların açık bıraktığı headless Playwright/Puppeteer tarayıcılarını (başlatanı ölmüş, 15 dk'dan eski) kapatır.
+
 Kurulum ve bekçilerin listesi için [README.md](README.md). Onay ve soruları telefondan cevaplamak için: [paperclip-telegram](https://github.com/iosayin/paperclip-telegram).
 
 Kurulumsuz çalıştırma: `npx paperclip-watchdog --dry-run` sonra `npx paperclip-watchdog`. npm: https://www.npmjs.com/package/paperclip-watchdog

@@ -36,12 +36,17 @@ export function loadConfig() {
       unexplainedBlocked: bool("PW_UNEXPLAINED_BLOCKED", true),
       benignAgentError: bool("PW_BENIGN_AGENT_ERROR", true),
       staleAlert: bool("PW_STALE_ALERT", true),
+      tokenFailover: bool("PW_TOKEN_FAILOVER", true),
+      orphanBrowsers: bool("PW_ORPHAN_BROWSERS", true),
     },
     idleMinutes: num("PW_IDLE_MINUTES", 10),
     idleMaxNudges: num("PW_IDLE_MAX_NUDGES", 2),
     unexplainedBlockedMinutes: num("PW_UNEXPLAINED_BLOCKED_MINUTES", 15),
     staleHours: num("PW_STALE_HOURS", 2),
     ciMarker: process.env.PW_CI_MARKER ?? "CI pending:",
+    orphanBrowserMinutes: num("PW_ORPHAN_BROWSER_MINUTES", 15),
+    // Matches the browsers Playwright and Puppeteer download. Override to cover other headless browsers.
+    orphanBrowserPattern: new RegExp(process.env.PW_ORPHAN_BROWSER_PATTERN ?? "ms-playwright[\\/]|puppeteer[\\/]|chrome-headless-shell"),
     // Alerts (optional): Telegram and/or a generic webhook. Without them, alerts go to stdout.
     telegramToken: secret("PW_TELEGRAM_BOT_TOKEN"),
     telegramChatId: (process.env.PW_TELEGRAM_CHAT_ID ?? "").trim(),

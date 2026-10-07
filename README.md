@@ -26,6 +26,8 @@ Agents get stuck for boring reasons: a card was answered but nobody woke the age
 | `unexplained-blocked` | `blocked` with no blocker, card, child task or reason | Reopens it (Paperclip's own "needs attention" blocks after 3 min) |
 | `benign-agent-error` | Agent left in `error` after its task was closed (e.g. a reviewer stopped right after approving) | Clears the error so future wakeups work |
 | `stale-alert` | Nothing moved for 2 h and no reason is visible | Alerts you (Telegram, webhook or log). No action |
+| `token-failover` | A credential agents use was disabled or rotated out, so every run fails at setup (`Secret is not active`) | Points the agents at another active secret of the same family (`CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN-1`, …), reopens the tasks that failed for it and tells you. If none is active, alerts once |
+| `orphan-browser` | A cancelled or timed-out run left a headless Playwright/Puppeteer browser running for hours, holding memory | Stops browsers whose launcher is gone and that are older than 15 min (with their child processes). Only on the machine the watchdog runs on |
 
 ## Quick start
 
@@ -64,7 +66,11 @@ Want to **answer** approvals and questions from your phone too? See [paperclip-t
 
 ## Configuration
 
-Every watcher can be turned off (`PW_ANSWERED_CARD=false`, …). Thresholds: `PW_IDLE_MINUTES`, `PW_IDLE_MAX_NUDGES`, `PW_UNEXPLAINED_BLOCKED_MINUTES`, `PW_STALE_HOURS`, `PW_CI_MARKER`. See [`.env.example`](.env.example).
+Every watcher can be turned off (`PW_ANSWERED_CARD=false`, …). Thresholds: `PW_IDLE_MINUTES`, `PW_IDLE_MAX_NUDGES`, `PW_UNEXPLAINED_BLOCKED_MINUTES`, `PW_STALE_HOURS`, `PW_CI_MARKER`, `PW_ORPHAN_BROWSER_MINUTES`, `PW_ORPHAN_BROWSER_PATTERN`. See [`.env.example`](.env.example).
+
+## Switching between Claude accounts
+
+Keep one secret per account in each company (`CLAUDE_CODE_OAUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN-1`, …). To move a company to another account, disable the old secret and leave the new one active: within a minute `token-failover` moves the agents over. Nothing is deleted, so switching back is the same click in reverse. Secrets whose names differ only by a trailing number count as one family; other secrets are never touched.
 
 ## Notes
 

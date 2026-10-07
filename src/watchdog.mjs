@@ -8,7 +8,9 @@
 //   node src/watchdog.mjs --dry-run  log what would be done, change nothing
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { loadConfig } from "./config.mjs";
+import { failoverTarget, findOrphanBrowsers, parsePs, secretFamily, statusFingerprint } from "./lib.mjs";
 
 const cfg = loadConfig();
 const DRY = process.argv.includes("--dry-run");
@@ -18,7 +20,7 @@ const SIGN = "🛡 watchdog:";
 
 // ── State
 const S = (() => { try { return JSON.parse(fs.readFileSync(cfg.stateFile, "utf8")); } catch { return {}; } })();
-for (const k of ["answered", "deps", "ci", "idle", "sessions", "unexplained", "stale", "agentErrors"]) S[k] ??= {};
+for (const k of ["answered", "deps", "ci", "idle", "sessions", "unexplained", "stale", "agentErrors", "secrets"]) S[k] ??= {};
 function saveState() {
   if (DRY) return;
   fs.mkdirSync(path.dirname(cfg.stateFile), { recursive: true, mode: 0o700 });
@@ -259,16 +261,85 @@ async function staleAlert(c) {
   }
 }
 
+// 9) Credential failover. An agent env var points to a secret that is no longer active (disabled, rotated out),
+//    so every run fails at setup ("Secret is not active") and tasks pile up as blocked. If another active secret
+//    of the same family exists (CLAUDE_CODE_OAUTH_TOKEN, CLAUDE_CODE_OAUTH_TOKEN-1, …), point the agents at it and
+//    reopen the tasks that failed for this reason. Agents are only inspected when a secret status changed.
+async function tokenFailover(c) {
+  const secrets = list(await pc(`/companies/${c.company.id}/secrets`).catch(() => []));
+  if (!secrets.length) return;
+  const fp = statusFingerprint(secrets);
+  if (S.secrets[c.company.id] === fp) return;
+  let pending = false; // a PATCH failed → check again next pass
+  const moved = new Map(); // agentId -> new secret name
+  for (const a of c.agents) {
+    if (a.status === "terminated") continue;
+    const detail = await pc(`/agents/${a.id}`).catch(() => null);
+    const env = { ...(detail?.adapterConfig?.env ?? {}) };
+    let changed = false;
+    for (const [key, ref] of Object.entries(env)) {
+      if (ref?.type !== "secret_ref") continue;
+      const current = secrets.find((x) => x.id === ref.secretId);
+      if (!current || current.status === "active") continue;
+      const target = failoverTarget(secrets, ref.secretId);
+      if (!target) {
+        // alerted once per status change (the fingerprint is saved below), not on every pass
+        await alert(`${c.company.name}: agent ${a.name} uses ${current.name} (${current.status}) and no other active ${secretFamily(current.name)}* secret exists. Its runs will fail until one is activated.`);
+        continue;
+      }
+      env[key] = { ...ref, secretId: target.id, version: "latest" };
+      changed = true;
+      moved.set(a.id, target.name);
+    }
+    if (!changed) continue;
+    const res = await act(`token-failover: ${c.company.name} ${a.name} → ${moved.get(a.id)}`, () =>
+      pc(`/agents/${a.id}`, { method: "PATCH", body: JSON.stringify({ adapterConfig: { ...detail.adapterConfig, env } }) }));
+    if (!res && !DRY) pending = true;
+  }
+  if (moved.size) {
+    const names = [...new Set(moved.values())].join(", ");
+    await alert(`${c.company.name}: ${moved.size} agent(s) were using an inactive secret and now use ${names}.`);
+    // Reopen tasks whose last run failed because of the inactive secret.
+    for (const issue of c.issues) {
+      if (issue.status !== "blocked" || !moved.has(issue.assigneeAgentId)) continue;
+      const last = c.runsOf(issue.id)[0];
+      if (!last || last.errorCode !== "setup_failed" || !/secret/i.test(String(last.error ?? ""))) continue;
+      await act(`token-failover: reopen ${issue.identifier}`, () =>
+        patchIssue(issue, { status: "todo", comment: `${SIGN} the last run could not start because its credential was inactive. The agent now uses an active one; continue where you left off.` }));
+    }
+  }
+  if (!pending && !DRY) S.secrets[c.company.id] = fp;
+}
+
+// 10) Orphaned headless browsers (host-level). When an agent run is cancelled or times out, Playwright/Puppeteer
+//     browsers can outlive their launcher and sit idle for hours holding memory. Only processes whose parent is
+//     gone (re-parented to pid 1 / an init reaper) and older than PW_ORPHAN_BROWSER_MINUTES are stopped.
+//     Works where the watchdog runs on the same machine as the agents (macOS, Linux); a no-op elsewhere.
+function orphanBrowsers() {
+  if (process.platform === "win32") return;
+  let procs;
+  try { procs = parsePs(execFileSync("ps", ["-Ao", "pid=,ppid=,etime=,command="], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 })); }
+  catch { return; }
+  const orphans = findOrphanBrowsers(procs, { pattern: cfg.orphanBrowserPattern, minAgeSeconds: cfg.orphanBrowserMinutes * 60 });
+  for (const o of orphans) {
+    log(`orphan-browser: stop pid ${o.pid} (${Math.round(o.age / 60)} min, ${o.kill.length} processes)`);
+    if (DRY) continue;
+    for (const pid of o.kill) { try { process.kill(pid, "SIGTERM"); } catch {} }
+  }
+}
+
 // ── One pass over all companies
 async function pass() {
   const snaps = [];
   for (const company of list(await pc("/companies"))) {
     try { snaps.push(await snapshot(company)); } catch (e) { log(`${company.name}: ${e.message}`); }
   }
-    for (const c of snaps) {
-    const w = cfg.watch;
-    for (const [on, fn] of [[w.answeredCard, answeredCard], [w.dependencyDone, dependencyDone], [w.ciWait, ciWait],
-      [w.idleAssigned, idleAssigned], [w.brokenSession, brokenSession], [w.unexplainedBlocked, unexplainedBlocked],
+  const w = cfg.watch;
+  if (w.orphanBrowsers) { try { orphanBrowsers(); } catch (e) { log(`orphanBrowsers: ${e.message}`); } }
+  for (const c of snaps) {
+    // tokenFailover runs first: when a credential is inactive, nothing else can make progress anyway.
+    for (const [on, fn] of [[w.tokenFailover, tokenFailover], [w.answeredCard, answeredCard], [w.dependencyDone, dependencyDone],
+      [w.ciWait, ciWait], [w.idleAssigned, idleAssigned], [w.brokenSession, brokenSession], [w.unexplainedBlocked, unexplainedBlocked],
       [w.benignAgentError, benignAgentError], [w.staleAlert, staleAlert]]) {
       if (!on) continue;
       try { await fn(c); } catch (e) { log(`${c.company.name} ${fn.name}: ${e.message}`); }

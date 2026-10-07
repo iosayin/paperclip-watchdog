@@ -1,6 +1,6 @@
 {
   "name": "paperclip-watchdog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Keeps your Paperclip AI company moving while you're away: finds stuck agent tasks and unsticks them. No model tokens.",
   "type": "module",
   "bin": {
@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node src/watchdog.mjs",
     "dry-run": "node src/watchdog.mjs --dry-run",
-    "check": "node --check src/watchdog.mjs && node --check src/config.mjs"
+    "check": "node --check src/watchdog.mjs && node --check src/config.mjs && node --check src/lib.mjs",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=20"
@@ -38,6 +39,7 @@
     "src/",
     "README.md",
     "README.tr.md",
+    "CHANGELOG.md",
     "LICENSE",
     ".env.example",
     "examples/"
