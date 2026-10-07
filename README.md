@@ -1,5 +1,7 @@
 # paperclip-watchdog
 
+[![npm](https://img.shields.io/npm/v/paperclip-watchdog?color=cb3837&logo=npm)](https://www.npmjs.com/package/paperclip-watchdog) [![license](https://img.shields.io/github/license/iosayin/paperclip-watchdog)](LICENSE) ![node](https://img.shields.io/badge/node-%E2%89%A520-339933?logo=node.js&logoColor=white) ![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
+
 **Keep your [Paperclip](https://github.com/paperclipai/paperclip) company moving while you're away.**
 
 Agents get stuck for boring reasons: a card was answered but nobody woke the agent, the task it waited for finished hours ago, CI finished (or will never start because the PR conflicts), a session broke and every run times out. You come back in the morning and nothing moved.
@@ -26,6 +28,16 @@ Agents get stuck for boring reasons: a card was answered but nobody woke the age
 | `stale-alert` | Nothing moved for 2 h and no reason is visible | Alerts you (Telegram, webhook or log). No action |
 
 ## Quick start
+
+**Fastest way** (no clone, Node ≥ 20):
+
+```bash
+# put your settings in .env (see .env.example), then
+npx paperclip-watchdog --dry-run
+npx paperclip-watchdog
+```
+
+Or from source:
 
 ```bash
 git clone https://github.com/iosayin/paperclip-watchdog && cd paperclip-watchdog

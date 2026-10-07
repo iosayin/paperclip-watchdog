@@ -7,3 +7,5 @@ Ajanlar sıkıcı sebeplerle takılır: kartı cevapladınız ama ajanı uyandı
 `paperclip-watchdog` her dakika Paperclip'e bakar, **mekanik** bir sebeple takılan işleri bulup yürütür; insan gerektiren bir durum varsa size haber verir. Model token'ı harcamaz, bağımlılığı yoktur, her işlemi görev başına sınırlıdır ve yorumla imzalar. `--dry-run` hiçbir şey değiştirmeden ne yapacağını gösterir.
 
 Kurulum ve bekçilerin listesi için [README.md](README.md). Onay ve soruları telefondan cevaplamak için: [paperclip-telegram](https://github.com/iosayin/paperclip-telegram).
+
+Kurulumsuz çalıştırma: `npx paperclip-watchdog --dry-run` sonra `npx paperclip-watchdog`. npm: https://www.npmjs.com/package/paperclip-watchdog
